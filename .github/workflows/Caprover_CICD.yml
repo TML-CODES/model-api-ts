@@ -1,0 +1,30 @@
+name: Caprover CI/CD
+on:
+  push:
+    branches: [ dev ]
+  pull_request:
+    branches: [ dev ]
+env: 
+  CAPROVER_PASSWORD: ${{ secrets.CAPROVER_PASSWORD }}
+jobs:
+  CI_CD:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install Caprover CLI
+      run: npm install caprover
+
+    - name: Caprover Login
+      run: npx caprover login -u ${{ vars.CAPROVER_URL }} -n ${{ vars.CAPROVER_NAME }} 
+        
+    - name: Deploy to Caprover
+      run: npx caprover deploy -b dev -a api-model -h ${{ vars.CAPROVER_URL }} --default
