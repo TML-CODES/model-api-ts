@@ -1,0 +1,19 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/@internal/prisma-prices/client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("PRICES_DATABASE_URL")
+}
+
+model services {
+  name                                String      @id
+  price                               Decimal     @db.Decimal(65, 2)
+  title                               String?
+  basePrice                           Decimal?    @db.Decimal(65, 2)
+  description                         String?     @db.Text
+  createdAt                           DateTime    @default(now())
+  updatedAt                           DateTime    @updatedAt
+}

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { UserData } from "../types";
-import Users from "../models/Users";
+import Users from "../models/repositories/Users.repository";
 
 export default async function (req: Request, res: Response, next: NextFunction){
     try{

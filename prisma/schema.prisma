@@ -7,10 +7,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum roles {
-    viewer
-    admin
-    superadmin
+// Permissões do usuario da aplicação(superadmin,admin,viewer)
+model roles {
+  id          String   @id
+  title       String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  users       users[]
+
+  @@map("roles")
 }
 
 model users {
@@ -23,11 +28,24 @@ model users {
   email                         String          @unique
   createdAt                     DateTime        @default(now())
   updatedAt                     DateTime        @updatedAt
-  roleId                        roles?          @default(viewer)
+  roleId                        String?         @default("view")
+  role                          roles?          @relation(fields: [roleId], references: [id])
   uriPartner                    String?         @unique
   isTermAcceptedNewVersion      Boolean?        @default(false)
   isTermAccepted                Boolean?        @default(false)
   termVersionAccepted           String?         
 
   @@map("users")
+}
+
+model session {
+    id                  String           @id @default(uuid()) 
+    userId              String?
+    user                users?           @relation(fields: [userId], references: [id], onDelete: Cascade)
+    accessToken         String?          @db.Text
+    refreshToken        String?          @db.Text
+    code                String?
+    expCode             DateTime?
+    createdAt           DateTime?        @default(now())
+    updatedAt           DateTime?        @updatedAt
 }

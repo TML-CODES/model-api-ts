@@ -1,12 +1,13 @@
 import { Router } from "express";
-import { isAuthenticated } from "../middlewares/authMid";
+import { isAuthenticated } from "../middlewares/auth.middleware";
+import authRouter from "./auth.routes";
+import userRouter from "./user.routes";
 
 const router = Router();
 router.use("/auth", authRouter);
 
 router.use(isAuthenticated);
 
-router.use("/", someRouter);
 router.use("/users", userRouter);
 
 export default router;

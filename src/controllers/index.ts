@@ -1,7 +1,7 @@
-import UsersController from './UsersController';
-import AuthController from './AuthController';
+import * as usersController from './users.controller';
+import * as authController from './auth.controller';
 
 export {
-    UsersController,
-    AuthController
+    usersController,
+    authController
 };

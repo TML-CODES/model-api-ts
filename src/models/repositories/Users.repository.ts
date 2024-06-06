@@ -1,6 +1,7 @@
 import { users } from "@prisma/client";
 import type { Prisma } from "@prisma/client";
-import { buildSqlToPrismaClosures, prisma } from "../modules/prisma";
+import { prisma } from "../../modules/prisma";
+import { buildSqlToPrismaClosures } from "../../utils/helpers";
 
 const selectDefault = {
     id: true,
@@ -12,13 +13,13 @@ const selectDefault = {
 };
 
 class Users {
-    async get(key: {id?: string, email?: string}, selectFields = {}) {
+    async get<T extends Prisma.usersFindManyArgs>(
+        key: {id?: string, email?: string}, 
+        select?: Prisma.SelectSubset<T, Prisma.usersFindManyArgs>['select']
+    ) {
         const res = await prisma.users.findFirst({ 
             where: { ...key }, 
-            select: {
-                ...selectDefault, 
-                ...selectFields
-            }
+            select: select || selectDefault
         });
         return res;
     }
@@ -57,12 +58,16 @@ class Users {
         whereClosure?: string | Prisma.SelectSubset<T, Prisma.usersFindManyArgs>['where'], 
         orderByClosure?: string | Prisma.SelectSubset<T, Prisma.usersFindManyArgs>['orderBy'],
         select?: Prisma.SelectSubset<T, Prisma.usersFindManyArgs>['select'],
+        limit = 10,
+        skip = 0
     ) {
         const { where, orderBy } = buildSqlToPrismaClosures(whereClosure, orderByClosure);
         const res = await prisma.users.findMany({
             where,
             orderBy,
-            select: (select) ? { ...selectDefault, ...select } : selectDefault
+            select: (select) ? { ...selectDefault, ...select } : selectDefault,
+            take: Number(limit || 10),
+            skip: Number(skip || 0)
         });
         return res;
     }

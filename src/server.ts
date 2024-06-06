@@ -1,11 +1,11 @@
 import 'express-async-errors';
 import 'dotenv/config';
+import './modules/logger';
 import express, { Request, Response, NextFunction } from 'express';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-
 import routes from './routes';
 
 const ENV_IS_PROD = String(process.env.NODE_ENV).includes('prod');
@@ -15,6 +15,7 @@ app.use(morgan('dev'));
 app.use(helmet());
 app.use(cookieParser());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 app.use((req: Request, res: Response, next: NextFunction)=>{

@@ -1,6 +1,11 @@
 import * as nodemailer from 'nodemailer';
 
-export default async function(email: string, title: string, text: string){
+export default async function(
+    email: string, 
+    title: string,
+    html: string, 
+    attachments?: Array<{ filename: string, content: Buffer, contentType: string }>
+){
     return new Promise((resolve, reject)=>{
         const transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -11,10 +16,11 @@ export default async function(email: string, title: string, text: string){
         });
     
         const mailOptions = {
-            from: process.env.GMAIL_EMAIL,
+            from: `"Nome Personalizado" <${process.env.GMAIL_EMAIL}>`,
             to: email,
-            subject: title,
-            text
+            subject: `${process.env.NODE_ENV != 'prod' ? `[AMBIENTE TESTE]` : ''}` + title,
+            html,
+            attachments: attachments || []
         };
     
         transporter.sendMail(mailOptions, (error, info) => {
